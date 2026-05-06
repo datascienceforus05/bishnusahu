@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionWrapper from "../ui/SectionWrapper";
@@ -7,6 +7,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function ResumeSection() {
   const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [resumeType, setResumeType] = useState<"short" | "detailed">("detailed");
+
+  const resumeFiles = {
+    short: "/Bishnu_Prasad_Sahu_Resume_1.pdf",
+    detailed: "/Bishnu_Prasad_Sahu_Resume.pdf",
+  };
 
   useLayoutEffect(() => {
     const triggerNode = sectionRef.current;
@@ -49,14 +55,44 @@ export default function ResumeSection() {
         <h2 className="resume-header mt-2 font-serif text-[clamp(2.4rem,5vw,4.2rem)] font-light text-[var(--ink)]">
           Resume
         </h2>
-        <p className="resume-header mt-2 font-sans text-sm text-[var(--mid)] sm:text-base">
-          My professional journey, distilled into a single page. For a more comprehensive view, feel free to download the full PDF version of my resume.
+        
+        <div className="resume-header mt-6 flex flex-wrap items-center gap-4">
+          <p className="font-sans text-sm text-[var(--mid)]">Select Resume Version:</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setResumeType("short")}
+              className={`px-4 py-1.5 text-[10px] uppercase tracking-widest transition-all ${
+                resumeType === "short"
+                  ? "bg-[var(--gold)] text-[var(--bg)]"
+                  : "border border-[var(--gold)] text-[var(--gold)] hover:bg-[rgba(201,168,108,0.1)]"
+              }`}
+            >
+              Short
+            </button>
+            <button
+              onClick={() => setResumeType("detailed")}
+              className={`px-4 py-1.5 text-[10px] uppercase tracking-widest transition-all ${
+                resumeType === "detailed"
+                  ? "bg-[var(--gold)] text-[var(--bg)]"
+                  : "border border-[var(--gold)] text-[var(--gold)] hover:bg-[rgba(201,168,108,0.1)]"
+              }`}
+            >
+              Detailed
+            </button>
+          </div>
+        </div>
+
+        <p className="resume-header mt-4 font-sans text-sm text-[var(--mid)] sm:text-base">
+          {resumeType === "short" 
+            ? "A concise overview of my core skills and experiences." 
+            : "A comprehensive view of my professional journey and achievements."}
         </p>
 
         <div className="resume-viewer glass-card mt-4 rounded-[3px] p-4 sm:p-5" data-nav-ignore="true">
           <div className="h-[60vh] overflow-hidden rounded-[3px] border border-[rgba(201,168,108,0.34)] bg-[rgba(10,14,24,0.88)] p-2">
             <iframe
-              src="/resume.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH"
+              key={resumeType}
+              src={`${resumeFiles[resumeType]}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
               title="Bishnu Resume PDF"
               className="h-full w-full"
               data-nav-ignore="true"
@@ -65,7 +101,7 @@ export default function ResumeSection() {
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <a
-              href="/resume.pdf"
+              href={resumeFiles[resumeType]}
               target="_blank"
               rel="noreferrer"
               className="corner-button inline-flex px-6 py-2 text-xs uppercase tracking-[0.2em] text-[var(--ink)]"
@@ -75,10 +111,10 @@ export default function ResumeSection() {
               <span aria-hidden="true" className="corner tr" />
               <span aria-hidden="true" className="corner bl" />
               <span aria-hidden="true" className="corner br" />
-              Open Full Resume
+              Open Full {resumeType === "short" ? "Short" : "Detailed"} Resume
             </a>
             <a
-              href="/resume.pdf"
+              href={resumeFiles[resumeType]}
               download
               className="font-mono text-sm text-[var(--gold)]"
               data-nav-ignore="true"
